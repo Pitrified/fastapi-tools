@@ -1,0 +1,1 @@
+"""Test fastapi_tools."""

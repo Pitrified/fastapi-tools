@@ -1,0 +1,69 @@
+[project]
+name = "fastapi-tools"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.14.*"
+dependencies = [
+    "chroma-haystack>=2.0.1",
+    "dotenv>=0.9.9",
+    "haystack-ai>=2.10.0",
+    "loguru>=0.7.3",
+    "ollama-haystack>=2.3.0",
+    "openai>=1.63.0",
+    "tiktoken>=0.9.0",
+]
+
+[project.optional-dependencies]
+webapp = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "python-multipart>=0.0.6",
+    "itsdangerous>=2.1.0",
+    "httpx>=0.26.0",
+    "email-validator>=2.3.0",
+    "jinja2>=3.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fastapi_tools"]
+
+[dependency-groups]
+dev = [
+    { include-group = "docs" },
+    { include-group = "lint" },
+    { include-group = "notebook" },
+    { include-group = "test" },
+]
+test = [
+    "pytest>=8.3.4",
+]
+lint = [
+    "ruff>=0.9.6",
+    "pyright[nodejs]>=1.1.407",
+    "pre-commit>=4.1.0",
+    "detect-secrets>=1.5.0",
+]
+notebook = [
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.5",
+    "nbformat>=5.10.4",
+    "nbstripout>=0.8.2",
+    "rich>=13.9.4",
+    "tqdm>=4.67.1",
+]
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+    "mkdocs-api-autonav>=0.2",
+]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+# remember to adjust include paths as needed (eg scripts folder)
+include = ["src", "tests"]
