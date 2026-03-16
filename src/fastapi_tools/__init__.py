@@ -9,9 +9,6 @@ from fastapi_tools.exceptions import NotAuthenticatedException
 from fastapi_tools.exceptions import NotAuthorizedException
 from fastapi_tools.exceptions import RateLimitExceededException
 from fastapi_tools.factory import create_app
-from fastapi_tools.params.load_env import load_env
-
-load_env()
 
 __all__ = [
     "GoogleOAuthConfig",
