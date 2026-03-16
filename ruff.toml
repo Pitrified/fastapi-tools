@@ -24,10 +24,14 @@ ignore = [
     "T20",  # print found
 ]
 "tests/*" = [
+    "ANN001", # Missing type annotation for function argument
     "ARG001", # Unused function argument: mocks and similar
     "INP001", # File `tests/...` is part of an implicit namespace package. Add an `__init__.py`. Causes a bug.
+    "PLC0415", # Import should be at the top-level of a file
     "PLR2004", # Magic value used in comparison, consider replacing `NUM` with a constant variable
     "S101",   # Use of assert detected
+    "S105",   # Possible hardcoded password
+    "S106",   # Possible hardcoded password assigned to argument
 ]
 "meta/*" = [
     "INP001", # Implicit namespace package
