@@ -7,12 +7,12 @@ exception handlers, routers, and optional static/template serving.
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
     from collections.abc import Callable
-    from pathlib import Path
 
     from fastapi import APIRouter
 
@@ -43,6 +43,9 @@ from fastapi_tools.routers.health import router as health_router
 from fastapi_tools.schemas.common import ErrorResponse
 from fastapi_tools.templating import configure_templates
 from fastapi_tools.templating import make_templates
+
+# Vendor assets bundled with this package (Bulma, HTMX, Swagger UI, ReDoc)
+_VENDOR_STATIC = Path(__file__).parent / "_static"
 
 
 @asynccontextmanager
@@ -113,7 +116,14 @@ def create_app(
 
     app.state.config = config
 
-    # Mount static assets (before routers so /static/... is resolved first)
+    # Mount bundled vendor assets (Bulma, HTMX, Swagger UI, ReDoc)
+    app.mount(
+        "/vendor",
+        StaticFiles(directory=str(_VENDOR_STATIC)),
+        name="vendor",
+    )
+
+    # Mount project-specific static assets
     if static_dir is not None:
         app.mount(
             "/static",
@@ -262,7 +272,7 @@ def register_exception_handlers(app: FastAPI) -> None:
 def _register_docs_routes(app: FastAPI) -> None:
     """Register self-hosted Swagger UI and ReDoc routes.
 
-    These serve locally-bundled JS/CSS from ``/static/swagger/`` so no
+    These serve locally-bundled JS/CSS from ``/vendor/swagger/`` so no
     external CDN is referenced, keeping CSP strict.
 
     Args:
@@ -275,8 +285,8 @@ def _register_docs_routes(app: FastAPI) -> None:
         return get_swagger_ui_html(
             openapi_url=app.openapi_url or "/openapi.json",
             title=f"{app.title} - Swagger UI",
-            swagger_js_url="/static/swagger/swagger-ui-bundle.js",
-            swagger_css_url="/static/swagger/swagger-ui.css",
+            swagger_js_url="/vendor/swagger/swagger-ui-bundle.js",
+            swagger_css_url="/vendor/swagger/swagger-ui.css",
             oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
         )
 
@@ -294,5 +304,5 @@ def _register_docs_routes(app: FastAPI) -> None:
         return get_redoc_html(
             openapi_url=app.openapi_url or "/openapi.json",
             title=f"{app.title} - ReDoc",
-            redoc_js_url="/static/swagger/redoc.standalone.js",
+            redoc_js_url="/vendor/swagger/redoc.standalone.js",
         )
