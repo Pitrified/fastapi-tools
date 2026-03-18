@@ -19,7 +19,6 @@ from fastapi_tools.schemas.auth import AuthURLResponse
 from fastapi_tools.schemas.auth import LogoutResponse
 from fastapi_tools.schemas.auth import SessionData
 from fastapi_tools.schemas.auth import UserResponse
-from fastapi_tools.utils.url import get_public_base_url
 
 if TYPE_CHECKING:
     from fastapi_tools.config import WebappConfig
@@ -49,9 +48,7 @@ async def google_login(
 ) -> AuthURLResponse | RedirectResponse:
     """Initiate Google OAuth login flow."""
     config: WebappConfig = request.app.state.config
-    redirect_uri = (
-        get_public_base_url(request, config.public_base_url) + "/auth/google/callback"
-    )
+    redirect_uri = config.google_oauth.redirect_uri
     auth_url, state = auth_service.get_authorization_url(redirect_uri=redirect_uri)
 
     if redirect:
@@ -79,10 +76,7 @@ async def google_callback(
 
     try:
         config: WebappConfig = request.app.state.config
-        redirect_uri = (
-            get_public_base_url(request, config.public_base_url)
-            + "/auth/google/callback"
-        )
+        redirect_uri = config.google_oauth.redirect_uri
         session = await auth_service.authenticate(
             code,
             state,
